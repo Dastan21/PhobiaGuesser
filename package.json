@@ -1,0 +1,13 @@
+{
+  "name": "phobia-guesser",
+  "version": "0.0.1",
+  "private": true,
+  "author": "Loïc Degrange",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "discord.js": "^12.5.0",
+    "discord.js-pagination": "^1.0.3",
+    "fs": "0.0.1-security",
+    "request-promise": "^4.2.6"
+  }
+}
