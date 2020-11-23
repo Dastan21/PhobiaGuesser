@@ -12,4 +12,4 @@ PhobiaGuesser is a minigame bot to mainly guess what a phobia is depending, to i
 - **guess** --guess the description of a phobia
 
 ## Invite link
-https://discord.com/oauth2/authorize?client_id=780066933386641428&scope=bot&permissions=2048
+https://discord.com/oauth2/authorize?client_id=780066933386641428&scope=bot&permissions=8192
