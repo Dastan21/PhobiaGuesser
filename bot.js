@@ -20,28 +20,51 @@ function commandProcess(msg) {
     let arguments = splitCommand.slice(1);
 
 	switch (primaryCommand.toLowerCase()) {
-		case 'help':
-			// showHelp(msg, arguments);
+		case 'help': // show helps
+			showHelp(msg, arguments);
 			break;
-		case 'update': // update the list
+
+		case 'update': // update the list    /!\ only available for the bot owner /!\
 			if (String(msg.author.id) === "310450863845933057")
 				updatePhobia(msg, arguments);
 			break;
+
 		case 'phobia': // get a random phobia
-			getPhobia(msg, arguments);
+			getPhobia(msg);
 			break;
+
 		case 'search': // look for a phobia
-			searchPhobia(msg, arguments);
+			searchPhobia(msg, String(arguments[0]));
 			break;
+
+		case 'list': // get the list of all phobias
+			searchPhobia(msg, 'list');
+			break;
+
 		case 'guess': // guess the description of a phobia
-			// guessPhobia(msg, arguments);
+			guessPhobia(msg);
 			break;
+
 		default:
 			msgReply(msg, "this command doesn't exist.");
 	}
 }
 
-function updatePhobia(msg, args) {
+function showHelp(msg) {
+	let embed = new Discord.MessageEmbed()
+		.setThumbnail(bot.user.displayAvatarURL())
+		.setURL("https://github.com/Dastan21/PhobiaGuesser")
+		.setFooter(msg.author.tag, msg.author.displayAvatarURL({ format: 'png', dynamic: true}))
+		.setTitle("HELP PANEL")
+		.setDescription("‎PhobiaGuesser is a minigame bot to mainly guess what a phobia is, depending to its name.\n‎")
+		.addFields(
+			{ name: "Prefix `?`", value: "\n‎" },
+			{ name: "Commands", value: "• `phobia` Get a random phobia\n• `search` Look for a phobia\n• `list` Get the list of all phobias\n• `guess` Guess the description of a phobia\n‎" }
+		);
+	msgSend(msg, "", embed);
+}
+
+function updatePhobia(msg) {
 	let list = {};
 	rp('https://fearof.org/phobias-list/')
 		.then(function(html) {
@@ -69,10 +92,13 @@ function getPhobia(msg, args) {
 	msgSend(msg, phobia.name + " - " + phobia.description);
 }
 
-function searchPhobia(msg, args) {
-	let search = String(args[0]);
-	if (search === "undefined") search = "";
-	let embed = new Discord.MessageEmbed().setTitle("Results for : " + search);
+function searchPhobia(msg, search) {
+	if (search === "undefined") { msgReply(msg, "wrong usage: `?search [WORD]`"); return; }
+	let title = "Results for `" + search + "`";
+	if (search === "list") {
+		search = "";
+		title = "List of phobias"
+	}
 	let r = 0;
 	let pages = [];
 	let res = searchPhobias(phobia_list, search);
@@ -80,20 +106,24 @@ function searchPhobia(msg, args) {
 		let p = -1;
 		for (phobia of res) {
 			r++;
-			if (r % 10 == 1) {
+			if (r % 5 == 1) {
 				p++;
-				pages[p] = new Discord.MessageEmbed().setTitle("Results for : " + search);
+				pages[p] = new Discord.MessageEmbed().setTitle(title).setDescription("\n‎");
 			}
-			pages[p].addField(phobia.name, phobia.description);
+			pages[p].addFields({name: phobia.name, value: phobia.description + "\n‎"});
 		}
 	} else
-		pages.push(new Discord.MessageEmbed().setTitle("Results for : " + search).addField("No result", "‎"));
+		pages.push(new Discord.MessageEmbed().setTitle(title).setDescription("\n‎").addField("No phobia contains your search...", "‎"));
 	paginationEmbed(msg, pages);
 }
 
-function guessPhobia(msg, args) {
+function guessPhobia(msg) {
 	let phobia = randomPhobia();
-	msgSend(msg, "WIP: " + phobia.name + " - " + phobia.description);
+	msgSend(msg, "Here is a phobia: `" + phobia.name + "`. You have 2 minutes to guess what type of phobia this one is.");
+	const filter = m => phobia.description.includes(m.content.split(' ').filter(function(e){return e}));
+	msg.channel.awaitMessages(filter, { max: 1, time: 120000, errors: ['time'] })
+		.then(collected => msgReply(msg, "well done! You've guessed it! The description is: " + phobia.description))
+		.catch(collected => msgSend(msg, "No one has guessed! The phobia description was: " + phobia.description));
 }
 
 async function msgSend(msg, content, attachment) {
@@ -109,10 +139,7 @@ async function msgReply(msg, content) {
 	);
 }
 function randomPhobia() {
-	return phobia_list[randomInt(0, Object.keys(phobia_list).length)];
-}
-function randomInt(min, max) {
-	return Math.round((Math.random()*Math.floor(max))+Math.floor(min));
+	return phobia_list[Math.round((Math.random()*Math.floor(Object.keys(phobia_list).length))+Math.floor(0))];
 }
 function searchPhobias(json, search) {
 	let res = [];

@@ -1,5 +1,5 @@
 # PhobiaGuesser <img src="icon.png" alt="PhobiaGuesser logo" width="32">
-PhobiaGuesser is a minigame bot to mainly guess what a phobia is depending to it name.
+PhobiaGuesser is a minigame bot to mainly guess what a phobia is depending, to its name.
 
 ## Prefix
 - ?
@@ -8,6 +8,7 @@ PhobiaGuesser is a minigame bot to mainly guess what a phobia is depending to it
 - **help** --show helps
 - **phobia** --get a random phobia
 - **search** --look for a phobia
+- **list** --get the list of all phobias
 - **guess** --guess the description of a phobia
 
 ## Invite link
