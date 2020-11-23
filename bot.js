@@ -120,7 +120,7 @@ function searchPhobia(msg, search) {
 function guessPhobia(msg) {
 	let phobia = randomPhobia();
 	msgSend(msg, "Here is a phobia: `" + phobia.name + "`. You have 2 minutes to guess what type of phobia this one is.");
-	const filter = m => phobia.description.includes(m.content.split(' ').filter(function(e){return e}));
+	const filter = m => phobia.description.replace(new RegExp("a |or |and |of |being |your |by |on |in","gm"),'').replace('.','').split(' ').slice(2).includes(m.content.split(' ').filter(function(e){return e}));
 	msg.channel.awaitMessages(filter, { max: 1, time: 120000, errors: ['time'] })
 		.then(collected => msgReply(msg, "well done! You've guessed it! The description is: " + phobia.description))
 		.catch(collected => msgSend(msg, "No one has guessed! The phobia description was: " + phobia.description));
