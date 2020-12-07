@@ -25,7 +25,7 @@ function commandProcess(msg) {
 			break;
 
 		case 'update': // update the list    /!\ only available for the bot owner /!\
-			if (String(msg.author.id) === "310450863845933057")
+			if (String(msg.author.id) === config.owner_id)
 				updatePhobia(msg, arguments);
 			break;
 
